@@ -3,10 +3,24 @@
 
 #include <logger.h>
 #include "client_logger_builder.h"
+#include <map>
+#include <string>
+#include "vector"
+#include <filesystem>
+#include <fstream>
+#include <nlohmann/json.hpp>
 
 class client_logger final:
     public logger
 {
+private:
+    std::map<std::string, std::vector<bool>> files;
+    std::map<std::string, std::pair<std::ofstream *, int>> streams;
+    std::string format;
+
+    client_logger(std::map<std::string, std::vector<int>> _files, const std::string& _format);
+
+    friend class client_logger_builder;
 
 public:
 

@@ -2,14 +2,19 @@
 #define MATH_PRACTICE_AND_OPERATING_SYSTEMS_CLIENT_LOGGER_BUILDER_H
 
 #include <logger_builder.h>
+#include "client_logger.h"
+#define count_severity 6
 
 class client_logger_builder final:
     public logger_builder
 {
+private:
+    std::map<std::string, std::vector<bool>> files;
+    std::string format;
 
 public:
 
-    client_logger_builder();
+    client_logger_builder() = default;
 
     client_logger_builder(
         client_logger_builder const &other);

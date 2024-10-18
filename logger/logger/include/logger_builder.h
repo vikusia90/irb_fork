@@ -8,9 +8,12 @@ class logger_builder
 
 public:
 
-    virtual ~logger_builder() noexcept = default;
+    static logger::severity string_to_severity(std::string const &severity_string);
+
 
 public:
+
+    virtual ~logger_builder() noexcept = default;
 
     virtual logger_builder *add_file_stream(
         std::string const &stream_file_path,

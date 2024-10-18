@@ -72,6 +72,14 @@ private:
 private:
     
     inline std::string get_typename() const noexcept override;
+
+private:
+
+    static size_t constexpr summ_size();
+
+    static size_t constexpr available_block_metadata_size();
+
+    static size_t constexpr ancillary_block_metadata_size();
     
 };
 

@@ -1,5 +1,5 @@
 #include <not_implemented.h>
-
+#include <mutex>
 #include "../include/allocator_sorted_list.h"
 
 allocator_sorted_list::~allocator_sorted_list()
@@ -20,15 +20,19 @@ allocator_sorted_list &allocator_sorted_list::operator=(
 }
 
 allocator_sorted_list::allocator_sorted_list(
-    allocator_sorted_list &&other) noexcept
+    allocator_sorted_list &&other) noexcept :
+    _trusted_memory(nullptr)
 {
-    throw not_implemented("allocator_sorted_list::allocator_sorted_list(allocator_sorted_list &&) noexcept", "your code should be here...");
+
+    if (other._trusted_memory == nullptr) return;
+    _trusted_memory = std::move(other._trusted_memory);
+    other._trusted_memory = nullptr
 }
 
 allocator_sorted_list &allocator_sorted_list::operator=(
     allocator_sorted_list &&other) noexcept
 {
-    throw not_implemented("allocator_sorted_list &allocator_sorted_list::operator=(allocator_sorted_list &&) noexcept", "your code should be here...");
+
 }
 
 allocator_sorted_list::allocator_sorted_list(
@@ -37,7 +41,34 @@ allocator_sorted_list::allocator_sorted_list(
     logger *logger,
     allocator_with_fit_mode::fit_mode allocate_fit_mode)
 {
-    throw not_implemented("allocator_sorted_list::allocator_sorted_list(size_t, allocator *, logger *, allocator_with_fit_mode::fit_mode)", "your code should be here...");
+    if (space_size<available_block_metadata_size())
+    {
+        //TODO
+    }
+
+    size_t memory_size=space_size+summ_size();
+    try
+    {
+        _trusted_memory = parent_allocator == nullptr
+                          ? ::operator new (memory_size)
+                          : parent_allocator->allocate(1, memory_size);
+    }
+    catch (std::bad_alloc const &ex)
+    {
+        // TODO
+
+        throw;
+    }
+
+    allocator **parent_allocator_placement = reinterpret_cast<allocator **>(_trusted_memory);
+    *parent_allocator_placement = parent_allocator;
+
+    class logger **logger_placement = reinterpret_cast<class logger **>(parent_allocator_placement + 1);
+    *logger_placement = logger;
+
+    std::mutex *synchronizer_placement = reinterpret_cast<std::mutex *>(logger_placement + 1);
+    allocator::construct(synchronizer_placement);
+
 }
 
 [[nodiscard]] void *allocator_sorted_list::allocate(
@@ -77,4 +108,19 @@ inline logger *allocator_sorted_list::get_logger() const
 inline std::string allocator_sorted_list::get_typename() const noexcept
 {
     throw not_implemented("inline std::string allocator_sorted_list::get_typename() const noexcept", "your code should be here...");
+}
+
+size_t constexpr allocator_sorted_list::summ_size()
+{
+    return sizeof(allocator *) + sizeof(std::mutex) + sizeof(logger *) + sizeof( allocator_with_fit_mode::fit_mode) + sizeof(void *);
+}
+
+size_t constexpr allocator_sorted_list::available_block_metadata_size()
+{
+    return sizeof(size_t) + sizeof(void *);
+}
+
+size_t constexpr allocator_sorted_list::ancillary_block_metadata_size()
+{
+    return sizeof(size_t) + sizeof(void *);
 }
