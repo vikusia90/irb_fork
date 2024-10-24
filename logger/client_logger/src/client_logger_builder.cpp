@@ -50,10 +50,12 @@ logger_builder *client_logger_builder::add_file_stream(
     logger::severity severity)
 {
     //получаем асболютны путь к файлу
-    std::string abs_file_path = std::filesystem::absolute(stream_file_path).string();
-    if (abs_file_path.empty()){//проверяем, пустой ли 
+    std::string abs_file_path = stream_file_path;//std::filesystem::absolute(stream_file_path).string();
+
+    if (abs_file_path.empty()){//проверяем, пустой ли
         throw std::logic_error("Path can't be empty");
     }
+
     auto i = files.find(abs_file_path);
     if (i != files.end()){
         //провеярем, задан ли sevetiry
@@ -61,10 +63,14 @@ logger_builder *client_logger_builder::add_file_stream(
         i->second[static_cast<int>(severity)] = true;
         return this;
     }
+
     // если элемент не найден, добавляем новый с уровнем ошибки
     std::vector<bool> severity_flags(count_severity, false); // инициализация вектора
     severity_flags[static_cast<int>(severity)] = true; // устанавливаем уровень ошибки
-    files.emplace(abs_file_path, severity_flags);
+    files.emplace(abs_file_path, severity_flags);// Добавляем путь и его уровень серьезности в map
+
+    std::cout << "Stream added for file: " << abs_file_path << std::endl; // Отладочное сообщение
+
     return this;
 }
 
@@ -91,12 +97,14 @@ logger_builder* client_logger_builder::transform_with_configuration(
 {
     std::ifstream config_file(configuration_file_path);
 
+    std::cout << "Trying to open configuration file: " << configuration_file_path << std::endl;
+
     if(!config_file.is_open()){
         throw std::runtime_error("Configuration file doesn't exist\n");
     }
 
     if(config_file.peek()==EOF){
-        throw std::runtime_error("Can't find configuration path\n");
+        throw std::runtime_error("Can't find configuration path1\n");
     }
 
     nlohmann::json config_data;
@@ -104,8 +112,8 @@ logger_builder* client_logger_builder::transform_with_configuration(
     config_file>>config_data;
 
     //проверка наличия указанного пути в конфигурации
-    if(config_data.find(configuration_file_path) == config_data.end()){
-        throw std::runtime_error("Can't find configuration path\n");
+    if(config_data.find(configuration_path) == config_data.end()){
+        throw std::runtime_error("Can't find configuration path2\n");
     }
 
     std::string file_path;
@@ -141,6 +149,14 @@ logger_builder *client_logger_builder::clear()
 logger *client_logger_builder::build() const
 {
     return new client_logger(files,format);
+}
+
+logger_builder *client_logger_builder::set_format(const std::string &_format) {
+    format = _format;
+    return this;
+}
+
+client_logger_builder::client_logger_builder() : format("%d %t %s %m"){
 }
 
 

@@ -8,7 +8,7 @@ class logger_builder
 
 public:
 
-    static logger::severity string_to_severity(std::string const &severity_string);
+    //static logger::severity string_to_severity(std::string const &severity_string);
 
 
 public:
@@ -25,6 +25,8 @@ public:
     virtual logger_builder* transform_with_configuration(
         std::string const &configuration_file_path,
         std::string const &configuration_path) = 0;
+
+    virtual logger_builder* set_format(std::string const& format) = 0;
 
     virtual logger_builder *clear() = 0;
 

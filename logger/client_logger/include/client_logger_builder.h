@@ -3,6 +3,8 @@
 
 #include <logger_builder.h>
 #include "client_logger.h"
+#include <map>
+#include <vector>
 #define count_severity 6
 
 class client_logger_builder final:
@@ -14,7 +16,7 @@ private:
 
 public:
 
-    client_logger_builder() = default;
+    client_logger_builder();
 
     client_logger_builder(
         client_logger_builder const &other);
@@ -46,6 +48,8 @@ public:
     logger_builder *clear() override;
 
     [[nodiscard]] logger *build() const override;
+
+    logger_builder* set_format(std::string const& _format) override;
 
 };
 

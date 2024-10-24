@@ -1,20 +1,20 @@
 {
   "file_paths": [
     {
-      "path": "1.txt",
+      "path": "C:/Users/biryu/irb_fork/logger/client_logger/tests/1.txt",
       "severity": [
         "trace"
       ]
     },
     {
-      "path": "2.txt",
+      "path": "C:/Users/biryu/irb_fork/logger/client_logger/tests/2.txt",
       "severity": [
         "trace",
         "debug"
       ]
     },
     {
-      "path": "3.txt",
+      "path": "C:/Users/biryu/irb_fork/logger/client_logger/tests/3.txt",
       "severity": [
         "trace",
         "debug",

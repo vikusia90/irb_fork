@@ -15,10 +15,10 @@ class client_logger final:
 {
 private:
     std::map<std::string, std::vector<bool>> files;
-    std::map<std::string, std::pair<std::ofstream *, int>> streams;
+    static std::map<std::string, std::pair<std::ofstream *, int>> streams;
     std::string format;
 
-    client_logger(std::map<std::string, std::vector<int>> _files, const std::string& _format);
+    client_logger(std::map<std::string, std::vector<bool>> _files, const std::string& _format);
 
     friend class client_logger_builder;
 
@@ -43,6 +43,10 @@ public:
     [[nodiscard]] logger const *log(
         const std::string &message,
         logger::severity severity) const noexcept override;
+
+    void close_streams();
+
+    std::string string_format(std::string const &message, logger::severity severity) const;
 
 };
 

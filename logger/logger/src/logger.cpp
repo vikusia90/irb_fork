@@ -65,6 +65,7 @@ std::string logger::current_datetime_to_string() noexcept
 
     std::ostringstream result_stream;
     result_stream << std::put_time(std::localtime(&time), "%d.%m.%Y %H:%M:%S");
-
+//data: 00.00.0000
+//time: 00:00:00
     return result_stream.str();
 }
